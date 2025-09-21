@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercices Interactifs - Bases de l'Algorithmique</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 30px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .exercise-card {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .exercise-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .exercise-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .exercise-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .exercise-description {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            position: relative;
+        }
+
+        .code-block.highlight {
+            animation: highlight 0.5s ease;
+        }
+
+        @keyframes highlight {
+            0% { background: #fff3cd; }
+            100% { background: #f8f9fa; }
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group textarea {
+            min-height: 120px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .feedback.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .feedback.hint {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .score-display {
+            font-size: 3em;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            margin: 5px;
+        }
+
+        .badge.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .hint-btn {
+            background: #ffc107;
+            color: #212529;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .hint-btn:hover {
+            background: #ffb300;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Exercices d'Algorithmique</h1>
+        <p class="subtitle">Testez vos connaissances sur les variables, l'affectation et les opérations</p>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar">0 / 5</div>
+        </div>
+
+        <!-- Exercice 1: Déclaration de variables -->
+        <div class="exercise-card active" id="exercise1">
+            <div class="exercise-header">
+                <h2 class="exercise-title">Exercice 1 : Déclaration de Variables</h2>
+                <p class="exercise-description">Déclarez correctement les variables demandées selon leur type.</p>
+            </div>
+
+            <div class="code-block">
+                <strong>Déclarez les variables suivantes :</strong><br>
+                • Une variable "vitesse" pour stocker une vitesse en km/h (peut avoir des décimales)<br>
+                • Une variable "ville" pour stocker le nom d'une ville<br>
+                • Une variable "nb_habitants" pour stocker le nombre d'habitants
+            </div>
+
+            <div class="input-group">
+                <label>Variable pour la vitesse :</label>
+                <input type="text" id="ex1_q1" placeholder="Ex: VARIABLE nom : TYPE">
+            </div>
+
+            <div class="input-group">
+                <label>Variable pour la ville :</label>
+                <input type="text" id="ex1_q2" placeholder="Ex: VARIABLE nom : TYPE">
+            </div>
+
+            <div class="input-group">
+                <label>Variable pour le nombre d'habitants :</label>
+                <input type="text" id="ex1_q3" placeholder="Ex: VARIABLE nom : TYPE">
+            </div>
+
+            <button class="hint-btn" onclick="showHint(1)">💡 Indice</button>
+            <div class="feedback hint" id="hint1"></div>
+            <div class="feedback" id="feedback1"></div>
+
+            <div class="btn-container">
+                <button class="btn btn-secondary" disabled>Précédent</button>
+                <button class="btn btn-primary" onclick="checkExercise(1)">Vérifier</button>
+            </div>
+        </div>
+
+        <!-- Exercice 2: Affectation -->
+        <div class="exercise-card" id="exercise2">
+            <div class="exercise-header">
+                <h2 class="exercise-title">Exercice 2 : Affectation de Valeurs</h2>
+                <p class="exercise-description">Affectez les bonnes valeurs aux variables déclarées.</p>
+            </div>
+
+            <div class="code-block">
+                <strong>Variables déclarées :</strong><br>
+                VARIABLE longueur : RÉEL<br>
+                VARIABLE largeur : RÉEL<br>
+                VARIABLE couleur : CHAÎNE<br><br>
+                <strong>Affectez :</strong><br>
+                • longueur = 12.5<br>
+                • largeur = 8.3<br>
+                • couleur = "bleu"
+            </div>
+
+            <div class="input-group">
+                <label>Affectation de longueur :</label>
+                <input type="text" id="ex2_q1" placeholder="Ex: variable ← valeur">
+            </div>
+
+            <div class="input-group">
+                <label>Affectation de largeur :</label>
+                <input type="text" id="ex2_q2" placeholder="Ex: variable ← valeur">
+            </div>
+
+            <div class="input-group">
+                <label>Affectation de couleur :</label>
+                <input type="text" id="ex2_q3" placeholder="N'oubliez pas les guillemets pour le texte">
+            </div>
+
+            <button class="hint-btn" onclick="showHint(2)">💡 Indice</button>
+            <div class="feedback hint" id="hint2"></div>
+            <div class="feedback" id="feedback2"></div>
+
+            <div class="btn-container">
+                <button class="btn btn-secondary" onclick="previousExercise()">Précédent</button>
+                <button class="btn btn-primary" onclick="checkExercise(2)">Vérifier</button>
+            </div>
+        </div>
+
+        <!-- Exercice 3: Opérations simples -->
+        <div class="exercise-card" id="exercise3">
+            <div class="exercise-header">
+                <h2 class="exercise-title">Exercice 3 : Opérations Mathématiques</h2>
+                <p class="exercise-description">Calculez les résultats des opérations suivantes.</p>
+            </div>
+
+            <div class="code-block">
+                <strong>Variables :</strong><br>
+                a ← 15<br>
+                b ← 4<br>
+                c ← 3<br><br>
+                <strong>Calculez :</strong><br>
+                resultat1 ← a + b * c<br>
+                resultat2 ← (a + b) * c<br>
+                resultat3 ← a % b
+            </div>
+
+            <div class="input-group">
+                <label>Valeur de resultat1 :</label>
+                <input type="number" id="ex3_q1" placeholder="Entrez la valeur numérique">
+            </div>
+
+            <div class="input-group">
+                <label>Valeur de resultat2 :</label>
+                <input type="number" id="ex3_q2" placeholder="Entrez la valeur numérique">
+            </div>
+
+            <div class="input-group">
+                <label>Valeur de resultat3 (reste de la division) :</label>
+                <input type="number" id="ex3_q3" placeholder="Entrez la valeur numérique">
+            </div>
+
+            <button class="hint-btn" onclick="showHint(3)">💡 Indice</button>
+            <div class="feedback hint" id="hint3"></div>
+            <div class="feedback" id="feedback3"></div>
+
+            <div class="btn-container">
+                <button class="btn btn-secondary" onclick="previousExercise()">Précédent</button>
+                <button class="btn btn-primary" onclick="checkExercise(3)">Vérifier</button>
+            </div>
+        </div>
+
+        <!-- Exercice 4: Problème combiné -->
+        <div class="exercise-card" id="exercise4">
+            <div class="exercise-header">
+                <h2 class="exercise-title">Exercice 4 : Calcul de Surface</h2>
+                <p class="exercise-description">Écrivez un algorithme complet pour calculer la surface d'un rectangle.</p>
+            </div>
+
+            <div class="code-block">
+                <strong>Problème :</strong><br>
+                Un rectangle a une longueur de 15.5 mètres et une largeur de 8.2 mètres.<br>
+                Écrivez l'algorithme qui calcule et stocke sa surface.
+            </div>
+
+            <div class="input-group">
+                <label>Écrivez votre algorithme complet :</label>
+                <textarea id="ex4_q1" placeholder="// Déclarations&#10;VARIABLE ...&#10;&#10;// Affectations&#10;...&#10;&#10;// Calcul&#10;..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Quelle est la valeur finale de la surface ?</label>
+                <input type="number" step="0.01" id="ex4_q2" placeholder="Entrez la valeur numérique">
+            </div>
+
+            <button class="hint-btn" onclick="showHint(4)">💡 Indice</button>
+            <div class="feedback hint" id="hint4"></div>
+            <div class="feedback" id="feedback4"></div>
+
+            <div class="btn-container">
+                <button class="btn btn-secondary" onclick="previousExercise()">Précédent</button>
+                <button class="btn btn-primary" onclick="checkExercise(4)">Vérifier</button>
+            </div>
+        </div>
+
+        <!-- Exercice 5: Problème complet -->
+        <div class="exercise-card" id="exercise5">
+            <div class="exercise-header">
+                <h2 class="exercise-title">Exercice 5 : Challenge Final - Gestion de Stock</h2>
+                <p class="exercise-description">Résolvez ce problème complet de gestion de stock.</p>
+            </div>
+
+            <div class="code-block">
+                <strong>Énoncé :</strong><br>
+                Un magasin vend des ordinateurs portables à 899.99€ l'unité.<br>
+                Un client achète 3 ordinateurs et bénéficie d'une réduction de 10% sur le total.<br>
+                Il paie avec 2500€.<br><br>
+                <strong>Calculez :</strong><br>
+                1. Le prix total sans réduction<br>
+                2. Le montant de la réduction<br>
+                3. Le prix total après réduction<br>
+                4. La monnaie à rendre
+            </div>
+
+            <div class="input-group">
+                <label>Prix total SANS réduction :</label>
+                <input type="number" step="0.01" id="ex5_q1" placeholder="En euros">
+            </div>
+
+            <div class="input-group">
+                <label>Montant de la réduction :</label>
+                <input type="number" step="0.01" id="ex5_q2" placeholder="En euros">
+            </div>
+
+            <div class="input-group">
+                <label>Prix total APRÈS réduction :</label>
+                <input type="number" step="0.01" id="ex5_q3" placeholder="En euros">
+            </div>
+
+            <div class="input-group">
+                <label>Monnaie à rendre :</label>
+                <input type="number" step="0.01" id="ex5_q4" placeholder="En euros">
+            </div>
+
+            <button class="hint-btn" onclick="showHint(5)">💡 Indice</button>
+            <div class="feedback hint" id="hint5"></div>
+            <div class="feedback" id="feedback5"></div>
+
+            <div class="btn-container">
+                <button class="btn btn-secondary" onclick="previousExercise()">Précédent</button>
+                <button class="btn btn-primary" onclick="checkExercise(5)">Terminer</button>
+            </div>
+        </div>
+
+        <!-- Écran de résultats -->
+        <div class="results-screen" id="resultsScreen">
+            <h2>🎉 Félicitations !</h2>
+            <p>Vous avez terminé tous les exercices</p>
+            <div class="score-display" id="scoreDisplay">0/5</div>
+            <div id="resultDetails"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        let currentExercise = 1;
+        let scores = {
+            1: false,
+            2: false,
+            3: false,
+            4: false,
+            5: false
+        };
+        let attempts = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0
+        };
+
+        function normalizeString(str) {
+            return str.trim()
+                .replace(/\s+/g, ' ')
+                .replace(/[←<\-=]/g, '←')
+                .toLowerCase();
+        }
+
+        function checkExercise(exerciseNum) {
+            attempts[exerciseNum]++;
+            let isCorrect = false;
+            let feedback = document.getElementById(`feedback${exerciseNum}`);
+            
+            switch(exerciseNum) {
+                case 1:
+                    const q1_1 = normalizeString(document.getElementById('ex1_q1').value);
+                    const q1_2 = normalizeString(document.getElementById('ex1_q2').value);
+                    const q1_3 = normalizeString(document.getElementById('ex1_q3').value);
+                    
+                    const correct1_1 = q1_1.includes('variable') && q1_1.includes('vitesse') && 
+                                      (q1_1.includes('réel') || q1_1.includes('reel'));
+                    const correct1_2 = q1_2.includes('variable') && q1_2.includes('ville') && 
+                                      (q1_2.includes('chaîne') || q1_2.includes('chaine'));
+                    const correct1_3 = q1_3.includes('variable') && q1_3.includes('nb_habitants') && 
+                                      q1_3.includes('entier');
+                    
+                    isCorrect = correct1_1 && correct1_2 && correct1_3;
+                    
+                    if (isCorrect) {
+                        feedback.className = 'feedback success';
+                        feedback.innerHTML = '✅ Excellent ! Toutes les déclarations sont correctes.';
+                    } else {
+                        feedback.className = 'feedback error';
+                        let errors = [];
+                        if (!correct1_1) errors.push('vitesse (RÉEL)');
+                        if (!correct1_2) errors.push('ville (CHAÎNE)');
+                        if (!correct1_3) errors.push('nb_habitants (ENTIER)');
+                        feedback.innerHTML = `❌ Vérifiez : ${errors.join(', ')}`;
+                    }
+                    break;
+
+                case 2:
+                    const q2_1 = normalizeString(document.getElementById('ex2_q1').value);
+                    const q2_2 = normalizeString(document.getElementById('ex2_q2').value);
+                    const q2_3 = normalizeString(document.getElementById('ex2_q3').value);
+                    
+                    const correct2_1 = q2_1.includes('longueur') && q2_1.includes('←') && q2_1.includes('12.5');
+                    const correct2_2 = q2_2.includes('largeur') && q2_2.includes('←') && q2_2.includes('8.3');
+                    const correct2_3 = q2_3.includes('couleur') && q2_3.includes('←') && 
+                                      (q2_3.includes('"bleu"') || q2_3.includes("'bleu'"));
+                    
+                    isCorrect = correct2_1 && correct2_2 && correct2_3;
+                    
+                    if (isCorrect) {
+                        feedback.className = 'feedback success';
+                        feedback.innerHTML = '✅ Parfait ! Toutes les affectations sont correctes.';
+                    } else {
+                        feedback.className = 'feedback error';
+                        let errors = [];
+                        if (!correct2_1) errors.push('longueur');
+                        if (!correct2_2) errors.push('largeur');
+                        if (!correct2_3) errors.push('couleur (n\'oubliez pas les guillemets)');
+                        feedback.innerHTML = `❌ Vérifiez : ${errors.join(', ')}`;
+                    }
+                    break;
+
+                case 3:
+                    const q3_1 = parseFloat(document.getElementById('ex3_q1').value);
+                    const q3_2 = parseFloat(document.getElementById('ex3_q2').value);
+                    const q3_3 = parseFloat(document.getElementById('ex3_q3').value);
+                    
+                    // a=15, b=4, c=3
+                    // resultat1 = 15 + 4 * 3 = 15 + 12 = 27
+                    // resultat2 = (15 + 4) * 3 = 19 * 3 = 57
+                    // resultat3 = 15 % 4 = 3
+                    
+                    const correct3_1 = q3_1 === 27;
+                    const correct3_2 = q3_2 === 57;
+                    const correct3_3 = q3_3 === 3;
+                    
+                    isCorrect = correct3_1 && correct3_2 && correct3_3;
+                    
+                    if (isCorrect) {
+                        feedback.className = 'feedback success';
+                        feedback.innerHTML = '✅ Bravo ! Vous maîtrisez l\'ordre des opérations.';
+                    } else {
+                        feedback.className = 'feedback error';
+                        let errors = [];
+                        if (!correct3_1) errors.push(`resultat1 (obtenu: ${q3_1}, attendu: 27)`);
+                        if (!correct3_2) errors.push(`resultat2 (obtenu: ${q3_2}, attendu: 57)`);
+                        if (!correct3_3) errors.push(`resultat3 (obtenu: ${q3_3}, attendu: 3)`);
+                        feedback.innerHTML = `❌ Erreurs : ${errors.join(', ')}`;
+                    }
+                    break;
+
+                case 4:
+                    const q4_1 = normalizeString(document.getElementById('ex4_q1').value);
+                    const q4_2 = parseFloat(document.getElementById('ex4_q2').value);
+                    
+                    // Check if algorithm contains key elements
+                    const hasDeclarations = q4_1.includes('variable') && 
+                                           (q4_1.includes('longueur') && q4_1.includes('largeur') && q4_1.includes('surface'));
+                    const hasAffectations = q4_1.includes('15.5') && q4_1.includes('8.2');
+                    const hasCalculation = q4_1.includes('surface') && q4_1.includes('←') && 
+                                          (q4_1.includes('*') || q4_1.includes('x'));
+                    
+                    const correct4_algo = hasDeclarations && hasAffectations && hasCalculation;
+                    const correct4_result = Math.abs(q4_2 - 127.1) < 0.01;
+                    
+                    isCorrect = correct4_algo && correct4_result;
+                    
+                    if (isCorrect) {
+                        feedback.className = 'feedback success';
+                        feedback.innerHTML = '✅ Excellent ! Votre algorithme est complet et le calcul est correct.';
+                    } else {
+                        feedback.className = 'feedback error';
+                        let errors = [];
+                        if (!hasDeclarations) errors.push('déclarations manquantes');
+                        if (!hasAffectations) errors.push('affectations manquantes');
+                        if (!hasCalculation) errors.push('calcul manquant');
+                        if (!correct4_result) errors.push(`surface incorrecte (attendu: 127.1)`);
+                        feedback.innerHTML = `❌ Problèmes : ${errors.join(', ')}`;
+                    }
+                    break;
+
+                case 5:
+                    const q5_1 = parseFloat(document.getElementById('ex5_q1').value);
+                    const q5_2 = parseFloat(document.getElementById('ex5_q2').value);
+                    const q5_3 = parseFloat(document.getElementById('ex5_q3').value);
+                    const q5_4 = parseFloat(document.getElementById('ex5_q4').value);
+                    
+                    // Prix unitaire = 899.99, quantité = 3
+                    // Total sans réduction = 899.99 * 3 = 2699.97
+                    // Réduction = 2699.97 * 0.10 = 269.997 ≈ 270.00
+                    // Total avec réduction = 2699.97 - 270.00 = 2429.97
+                    // Monnaie = 2500 - 2429.97 = 70.03
+                    
+                    const correct5_1 = Math.abs(q5_1 - 2699.97) < 0.01;
+                    const correct5_2 = Math.abs(q5_2 - 270.00) < 0.01;
+                    const correct5_3 = Math.abs(q5_3 - 2429.97) < 0.01;
+                    const correct5_4 = Math.abs(q5_4 - 70.03) < 0.01;
+                    
+                    isCorrect = correct5_1 && correct5_2 && correct5_3 && correct5_4;
+                    
+                    if (isCorrect) {
+                        feedback.className = 'feedback success';
+                        feedback.innerHTML = '✅ Félicitations ! Vous avez résolu le problème complet avec succès !';
+                    } else {
+                        feedback.className = 'feedback error';
+                        let errors = [];
+                        if (!correct5_1) errors.push('prix sans réduction');
+                        if (!correct5_2) errors.push('montant réduction');
+                        if (!correct5_3) errors.push('prix avec réduction');
+                        if (!correct5_4) errors.push('monnaie');
+                        feedback.innerHTML = `❌ Vérifiez : ${errors.join(', ')}`;
+                    }
+                    break;
+            }
+
+            feedback.style.display = 'block';
+            
+            if (isCorrect) {
+                scores[exerciseNum] = true;
+                setTimeout(() => {
+                    if (exerciseNum < 5) {
+                        nextExercise();
+                    } else {
+                        showResults();
+                    }
+                }, 1500);
+            }
+            
+            updateProgress();
+        }
+
+        function showHint(exerciseNum) {
+            const hints = {
+                1: "Rappel des types : ENTIER (nombres entiers), RÉEL (nombres décimaux), CHAÎNE (texte)",
+                2: "Utilisez la flèche ← pour l'affectation. Les chaînes de caractères doivent être entre guillemets.",
+                3: "Attention à l'ordre des opérations ! La multiplication se fait avant l'addition. Le modulo (%) donne le reste de la division.",
+                4: "Structure : 1) Déclarez les 3 variables nécessaires, 2) Affectez les valeurs, 3) Calculez surface = longueur * largeur",
+                5: "Étapes : 1) Total = prix × quantité, 2) Réduction = total × 0.10, 3) Total final = total - réduction, 4) Monnaie = argent donné - total final"
+            };
+            
+            const hintDiv = document.getElementById(`hint${exerciseNum}`);
+            hintDiv.innerHTML = `💡 ${hints[exerciseNum]}`;
+            hintDiv.style.display = 'block';
+        }
+
+        function nextExercise() {
+            if (currentExercise < 5) {
+                document.getElementById(`exercise${currentExercise}`).classList.remove('active');
+                currentExercise++;
+                document.getElementById(`exercise${currentExercise}`).classList.add('active');
+                updateProgress();
+            }
+        }
+
+        function previousExercise() {
+            if (currentExercise > 1) {
+                document.getElementById(`exercise${currentExercise}`).classList.remove('active');
+                currentExercise--;
+                document.getElementById(`exercise${currentExercise}`).classList.add('active');
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const completed = Object.values(scores).filter(s => s === true).length;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = `${(completed / 5) * 100}%`;
+            progressBar.textContent = `${completed} / 5`;
+        }
+
+        function showResults() {
+            const completed = Object.values(scores).filter(s => s === true).length;
+            document.getElementById(`exercise${currentExercise}`).classList.remove('active');
+            document.getElementById('resultsScreen').style.display = 'block';
+            document.getElementById('scoreDisplay').textContent = `${completed}/5`;
+            
+            let details = '<div style="margin-top: 20px;">';
+            for (let i = 1; i <= 5; i++) {
+                const badge = scores[i] ? 'correct' : 'incorrect';
+                const icon = scores[i] ? '✅' : '❌';
+                details += `<span class="badge ${badge}">${icon} Exercice ${i}</span>`;
+            }
+            details += '</div>';
+            
+            if (completed === 5) {
+                details += '<p style="margin-top: 20px; font-size: 1.2em;">🏆 Perfect ! Vous maîtrisez les bases de l\'algorithmique !</p>';
+            } else if (completed >= 3) {
+                details += '<p style="margin-top: 20px;">Bon travail ! Continuez à pratiquer pour améliorer votre score.</p>';
+            } else {
+                details += '<p style="margin-top: 20px;">N\'abandonnez pas ! Revisitez le tutoriel et réessayez.</p>';
+            }
+            
+            document.getElementById('resultDetails').innerHTML = details;
+        }
+
+        function restartQuiz() {
+            currentExercise = 1;
+            scores = {1: false, 2: false, 3: false, 4: false, 5: false};
+            attempts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+            
+            // Reset all inputs
+            document.querySelectorAll('input, textarea').forEach(input => {
+                input.value = '';
+            });
+            
+            // Hide all feedback
+            document.querySelectorAll('.feedback').forEach(feedback => {
+                feedback.style.display = 'none';
+            });
+            
+            // Reset display
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.querySelectorAll('.exercise-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById('exercise1').classList.add('active');
+            
+            updateProgress();
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
